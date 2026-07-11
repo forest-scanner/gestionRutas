@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Zonas Verdes - Rutas</title>
+    <!-- Hoja de estilos de Leaflet para el mapa -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+    <!-- Google Fonts para una tipografía moderna -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Hoja de estilos personalizada -->
+    <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Panel lateral para controles -->
+        <aside class="sidebar">
+            <header>
+                <h1>Gestión Zonas Verdes</h1>
+                <p>Planificación de inspecciones y trabajos.</p>
+            </header>
+
+            <section class="control-group">
+                <h2>Cargar Datos</h2>
+                <div class="file-upload-wrapper">
+                    <input type="file" id="geojson-input" accept=".geojson,application/geo+json" />
+                    <label for="geojson-input" class="btn btn-primary">Subir GeoJSON de Trabajo</label>
+                </div>
+                
+                <div class="btn-group-row">
+                    <button id="btn-example" class="btn btn-secondary btn-small">Cargar Ejemplo</button>
+                    <button id="btn-download-example" class="btn btn-outline btn-small">Descargar Plantilla</button>
+                </div>
+            </section>
+
+            <section class="control-group">
+                <h2>Puntos de Inspección</h2>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                    <p class="help-text" style="margin:0;">Arrastra para ordenar.</p>
+                    <button id="btn-toggle-edit" class="btn btn-outline btn-small" style="width: auto; font-size: 0.75rem; padding: 0.4rem 0.5rem;">📍 Añadir en Mapa</button>
+                </div>
+                <ul id="points-list" class="points-list">
+                    <li class="empty-list">No hay puntos cargados.</li>
+                </ul>
+            </section>
+
+            <section class="control-group action-group">
+                <h2>Generar Ruta</h2>
+                <button id="btn-optimize" class="btn btn-primary" disabled>
+                    <span class="icon">✨</span> Ruta Óptima (IA)
+                </button>
+                <button id="btn-manual-route" class="btn btn-secondary" disabled>
+                    <span class="icon">📝</span> Ruta Manual (Lista)
+                </button>
+                
+                <div class="export-actions">
+                    <button id="btn-export-gpx" class="btn btn-success" disabled>GPX</button>
+                    <button id="btn-export-geojson" class="btn btn-success" disabled>GeoJSON</button>
+                </div>
+            </section>
+            
+            <div id="status-message" class="status-message"></div>
+        </aside>
+
+        <!-- Contenedor principal del mapa -->
+        <main class="map-container">
+            <div id="map"></div>
+        </main>
+    </div>
+
+    <!-- Librería Leaflet -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <!-- Librería togpx para generar el archivo GPX -->
+    <script src="https://unpkg.com/togpx@0.5.4/togpx.js"></script>
+    <!-- SortableJS para arrastrar y soltar la lista -->
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+    <!-- Lógica principal de la aplicación -->
+    <script src="./app.js"></script>
+</body>
+</html>

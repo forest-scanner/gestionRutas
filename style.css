@@ -1,0 +1,308 @@
+/* 
+ * Sistema de diseño y variables CSS.
+ * Tema "Zonas Verdes" (Green Zones).
+ */
+:root {
+    --primary-color: #059669;     /* Verde esmeralda (principal) */
+    --primary-hover: #047857;
+    --secondary-color: #f0fdf4;   /* Verde muy claro */
+    --secondary-hover: #dcfce7;
+    --success-color: #16a34a;     /* Verde éxito */
+    --success-hover: #15803d;
+    --outline-color: #e5e7eb;
+    --outline-hover: #d1d5db;
+    --text-primary: #1f2937;
+    --text-secondary: #4b5563;
+    --border-color: #d1d5db;
+    --bg-color: #ffffff;
+    --sidebar-bg: rgba(255, 255, 255, 0.95);
+    --sidebar-width: 400px;
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    color: var(--text-primary);
+    background-color: var(--bg-color);
+    line-height: 1.5;
+    height: 100vh;
+    overflow: hidden;
+}
+
+.app-container {
+    display: flex;
+    height: 100%;
+}
+
+.sidebar {
+    width: var(--sidebar-width);
+    background-color: var(--sidebar-bg);
+    border-right: 1px solid var(--border-color);
+    padding: 2rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.75rem;
+    overflow-y: auto;
+    z-index: 1000;
+    box-shadow: var(--shadow-lg);
+    backdrop-filter: blur(10px); /* Efecto Glassmorphism */
+}
+
+header h1 {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    margin-bottom: 0.25rem;
+    letter-spacing: -0.02em;
+}
+
+header p {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+}
+
+.control-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.control-group h2 {
+    font-size: 0.9rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-secondary);
+    border-bottom: 2px solid var(--secondary-color);
+    padding-bottom: 0.25rem;
+}
+
+.help-text {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+}
+
+.file-upload-wrapper {
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+}
+
+.file-upload-wrapper input[type=file] {
+    font-size: 100px;
+    position: absolute;
+    left: 0;
+    top: 0;
+    opacity: 0;
+    cursor: pointer;
+    height: 100%;
+}
+
+.btn {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+    width: 100%;
+    padding: 0.75rem 1rem;
+    font-size: 0.95rem;
+    font-weight: 600;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.btn-small {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.85rem;
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    color: white;
+    box-shadow: 0 2px 4px rgba(5, 150, 105, 0.2);
+}
+
+.btn-primary:not(:disabled):hover {
+    background-color: var(--primary-hover);
+    transform: translateY(-1px);
+}
+
+.btn-secondary {
+    background-color: var(--secondary-color);
+    color: var(--primary-color);
+}
+
+.btn-secondary:not(:disabled):hover {
+    background-color: var(--secondary-hover);
+}
+
+.btn-outline {
+    background-color: transparent;
+    border: 1px solid var(--outline-color);
+    color: var(--text-secondary);
+}
+
+.btn-outline:not(:disabled):hover {
+    background-color: var(--outline-hover);
+}
+
+.btn-outline.active {
+    background-color: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+}
+
+.btn-success {
+    background-color: var(--success-color);
+    color: white;
+}
+
+.btn-success:not(:disabled):hover {
+    background-color: var(--success-hover);
+}
+
+.btn-group-row {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.export-actions {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+}
+
+/* Estilos de la lista de puntos */
+.points-list {
+    list-style: none;
+    max-height: 250px;
+    overflow-y: auto;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background: #f9fafb;
+    padding: 0.25rem;
+}
+
+.point-item {
+    display: flex;
+    align-items: center;
+    padding: 0.5rem;
+    background: white;
+    margin-bottom: 0.25rem;
+    border-radius: 6px;
+    border: 1px solid #e5e7eb;
+    cursor: grab;
+    transition: box-shadow 0.2s;
+}
+
+.point-item:active {
+    cursor: grabbing;
+}
+
+.point-item:hover {
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.point-drag-handle {
+    color: #9ca3af;
+    margin-right: 0.5rem;
+    cursor: inherit;
+}
+
+.point-info {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+
+.point-id {
+    font-weight: 600;
+    font-size: 0.85rem;
+    color: var(--text-primary);
+}
+
+.point-desc {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+}
+
+.point-color-indicator {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    margin-left: 0.5rem;
+}
+
+.empty-list {
+    padding: 1rem;
+    text-align: center;
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+}
+
+.status-message {
+    font-size: 0.85rem;
+    padding: 0.75rem;
+    border-radius: 8px;
+    display: none;
+    margin-top: auto;
+}
+
+.status-message.active {
+    display: block;
+    animation: fadeIn 0.3s ease;
+}
+
+.status-message.info {
+    background-color: var(--secondary-color);
+    color: var(--primary-color);
+    border: 1px solid #a7f3d0;
+}
+
+.status-message.error {
+    background-color: #fee2e2;
+    color: #b91c1c;
+    border: 1px solid #fecaca;
+}
+
+.map-container {
+    flex-grow: 1;
+    position: relative;
+}
+
+#map {
+    width: 100%;
+    height: 100%;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(5px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 768px) {
+    .app-container {
+        flex-direction: column;
+    }
+    
+    .sidebar {
+        width: 100%;
+        max-height: 50vh;
+        border-right: none;
+        border-bottom: 1px solid var(--border-color);
+    }
+}
