@@ -1,9 +1,9 @@
 
 # Optimizador de Rutas - Zonas Verdes
 
-Aplicación web estática para gestionar rutas de insspección en zonas verdes (arbolado, tocones, nuevas plantaciones, etc.). 
+Aplicación web estática para gestionar rutas de inspección en zonas verdes (arbolado, tocones, nuevas plantaciones, etc.). 
 
-La idea principal es subir un GeoJSON con los puntos de trabajo del día y sacar una ruta por calles para pasársela a los equipos de trabajos, ya sea en formato GPX para el navegador GPS o en GeoJSON para verlo luego en QGIS u otro visor SIG.
+La idea principal es subir un GeoJSON con los puntos de trabajo del día y sacar una ruta por calles para pasársela a los equipos de inspección, ya sea en formato GPX para el navegador GPS o en GeoJSON para verlo luego en QGIS u otro visor SIG.
 
 ## Características
 
