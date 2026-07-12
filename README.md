@@ -29,3 +29,4 @@ Están enlazadas por CDN directo para que funcione sin instalar nada:
 *   [Leaflet](https://leafletjs.com/) (Motor del mapa).
 *   [SortableJS](https://sortablejs.github.io/Sortable/) (Para hacer la lista arrastrable fluidamente).
 *   [togpx](https://github.com/tyrasd/togpx) (Librería ligera para parsear de GeoJSON a GPX).
+<img width="2470" height="1216" alt="image" src="https://github.com/user-attachments/assets/93812e23-071f-400b-b8e6-b0a79d6ad7bb" />
