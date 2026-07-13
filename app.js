@@ -330,10 +330,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const getNavIcon = (heading) => {
         // SVG de una flecha de navegación (chevron)
-        const svg = `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%233b82f6' stroke='white' stroke-width='2'><path d='M12 2L22 22L12 18L2 22L12 2Z'/></svg>`;
+        const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#3b82f6" stroke="white" stroke-width="2"><path d="M12 2L22 22L12 18L2 22L12 2Z"/></svg>`;
+        const encodedSvg = encodeURIComponent(svg);
         return L.divIcon({
             className: 'custom-nav-icon',
-            html: `<div style="width: 28px; height: 28px; background: url(\"data:image/svg+xml;utf8,${svg}\") no-repeat center center; background-size: contain; transform: rotate(${heading || 0}deg); filter: drop-shadow(0px 2px 3px rgba(0,0,0,0.4));"></div>`,
+            html: `<div style="width: 28px; height: 28px; background: url('data:image/svg+xml;utf8,${encodedSvg}') no-repeat center center; background-size: contain; transform: rotate(${heading || 0}deg); filter: drop-shadow(0px 2px 3px rgba(0,0,0,0.4));"></div>`,
             iconSize: [28, 28],
             iconAnchor: [14, 14]
         });
