@@ -327,6 +327,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let watchId = null;
     let locationMarker = null;
+    let guideLine = null;
 
     const getNavIcon = (heading) => {
         // SVG de una flecha de navegación (chevron)
@@ -350,6 +351,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 map.removeLayer(locationMarker);
                 locationMarker = null;
             }
+            if (guideLine) {
+                map.removeLayer(guideLine);
+                guideLine = null;
+            }
             btn.innerHTML = '📍 Seguir mi ubicación';
             btn.classList.remove('active');
         } else {
@@ -360,7 +365,6 @@ document.addEventListener('DOMContentLoaded', () => {
             btn.innerHTML = '🛑 Detener navegación';
             btn.classList.add('active');
             
-            // Usamos un lastHeading para no perder la orientación si el dispositivo se detiene
             let lastHeading = 0;
             
             watchId = navigator.geolocation.watchPosition((pos) => {
@@ -376,6 +380,17 @@ document.addEventListener('DOMContentLoaded', () => {
                     locationMarker.setLatLng([lat, lng]);
                     locationMarker.setIcon(getNavIcon(lastHeading));
                 }
+
+                // Dibujar línea guía roja discontinua hacia el primer punto si existe
+                if (currentPoints.length > 0) {
+                    const targetLatLng = [currentPoints[0].coordinates[1], currentPoints[0].coordinates[0]];
+                    if (!guideLine) {
+                        guideLine = L.polyline([[lat, lng], targetLatLng], { color: '#ef4444', dashArray: '8, 8', weight: 3, opacity: 0.8 }).addTo(map);
+                    } else {
+                        guideLine.setLatLngs([[lat, lng], targetLatLng]);
+                    }
+                }
+
                 map.setView([lat, lng], 17);
             }, (err) => {
                 showMessage('Error al obtener ubicación', 'error');
