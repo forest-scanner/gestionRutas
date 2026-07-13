@@ -67,9 +67,12 @@
                 <button id="btn-navigate" class="btn btn-outline" style="margin-top: 0.5rem; width: 100%; border-color: #3b82f6; color: #3b82f6;" onclick="window.toggleNavigation()">
                     <span class="icon">📍</span> Seguir mi ubicación en el mapa
                 </button>
-                <button id="btn-google-maps" class="btn btn-outline" style="margin-top: 0.5rem; width: 100%; border-color: #4285F4; color: #4285F4;" onclick="window.openGoogleMaps()">
-                    <span class="icon">🗺️</span> Abrir en Google Maps
+                <button id="btn-navigate" class="btn btn-outline" style="margin-top: 0.5rem; width: 100%; border-color: #3b82f6; color: #3b82f6;" onclick="window.toggleNavigation()">
+                    <span class="icon">📍</span> Seguir mi ubicación en el mapa
                 </button>
+                <div id="google-maps-links" style="margin-top: 0.5rem; display: flex; flex-direction: column; gap: 0.5rem;">
+                    <!-- Botones de Google Maps dinámicos -->
+                </div>
             </section>
             
             <div id="status-message" class="status-message"></div>

@@ -108,6 +108,8 @@ document.addEventListener('DOMContentLoaded', () => {
         currentRouteGeoJSON = null;
         btnExportGPX.disabled = true;
         btnExportGeoJSON.disabled = true;
+        const gmContainer = document.getElementById('google-maps-links');
+        if(gmContainer) gmContainer.innerHTML = '';
 
         if (!geojsonData || !geojsonData.features) {
             showMessage('El archivo GeoJSON no es válido.', 'error');
@@ -259,6 +261,7 @@ document.addEventListener('DOMContentLoaded', () => {
             showMessage('Ruta calculada con éxito.', 'info');
             btnExportGPX.disabled = false;
             btnExportGeoJSON.disabled = false;
+            generateGoogleMapsLinks();
         } catch (error) {
             console.error("Error:", error);
             showMessage('Error al calcular la ruta.', 'error');
@@ -379,18 +382,41 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    window.openGoogleMaps = () => {
-        if (!currentRouteGeoJSON) return;
-        const coords = currentPoints.map(p => `${p.coordinates[1]},${p.coordinates[0]}`); 
-        if (coords.length > 10) {
-            showMessage('Google Maps permite unos 10 puntos, abriendo los primeros...', 'info');
+    const generateGoogleMapsLinks = () => {
+        const container = document.getElementById('google-maps-links');
+        if (!container) return;
+        container.innerHTML = '';
+        if (currentPoints.length < 2) return;
+
+        const maxIndexDiff = 9; // Google Maps soporta max 9 waypoints intermedios, total 11 paradas por enlace
+        let startIndex = 0;
+        let part = 1;
+
+        while (startIndex < currentPoints.length - 1) {
+            let endIndex = Math.min(startIndex + maxIndexDiff, currentPoints.length - 1);
+            
+            const slice = currentPoints.slice(startIndex, endIndex + 1);
+            const coords = slice.map(p => `${p.coordinates[1]},${p.coordinates[0]}`);
+            const origin = coords[0];
+            const dest = coords[coords.length - 1];
+            const waypoints = coords.slice(1, coords.length - 1).join('|');
+            
+            const routeProfileElement = document.getElementById('route-profile');
+            const modeStr = (routeProfileElement && routeProfileElement.value === 'foot') ? 'walking' : 'driving';
+            
+            let url = `https://www.google.com/maps/dir/?api=1&origin=${origin}&destination=${dest}&travelmode=${modeStr}`;
+            if (waypoints) url += `&waypoints=${waypoints}`;
+
+            const btn = document.createElement('button');
+            btn.className = 'btn btn-outline';
+            btn.style.cssText = 'width: 100%; border-color: #4285F4; color: #4285F4; background: white;';
+            btn.innerHTML = `<span class="icon">🗺️</span> Abrir en Google Maps ${currentPoints.length > 10 ? `(Tramo ${part})` : ''}`;
+            btn.onclick = () => window.open(url, '_blank');
+            
+            container.appendChild(btn);
+
+            startIndex = endIndex;
+            part++;
         }
-        const slice = coords.slice(0, 10);
-        const origin = slice[0];
-        const dest = slice[slice.length - 1];
-        const waypoints = slice.slice(1, slice.length - 1).join('|');
-        const modeStr = document.getElementById('route-profile').value === 'driving' ? 'driving' : 'walking';
-        const url = `https://www.google.com/maps/dir/?api=1&origin=${origin}&destination=${dest}&waypoints=${waypoints}&travelmode=${modeStr}`;
-        window.open(url, '_blank');
     };
 });
