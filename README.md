@@ -1,9 +1,8 @@
-
 # Optimizador de Rutas - Zonas Verdes
 
-Aplicación web estática para gestionar rutas de inspección en zonas verdes (arbolado, tocones, nuevas plantaciones, etc.). 
+Aplicación web estática para gestionar rutas de inspección y trabajos forestales (arbolado, tocones, nuevas plantaciones, etc.). 
 
-La idea principal es subir un GeoJSON con los puntos de trabajo del día y sacar una ruta por calles para pasársela a los equipos de inspección, ya sea en formato GPX para el navegador GPS o en GeoJSON para verlo luego en QGIS u otro visor SIG.
+La idea principal es subir un GeoJSON con los puntos de trabajo del día y sacar una ruta por calles para pasársela a las brigadas, ya sea en formato GPX para el navegador GPS o en GeoJSON para verlo luego en QGIS u otro visor SIG.
 
 ## Características
 
@@ -21,7 +20,13 @@ La idea principal es subir un GeoJSON con los puntos de trabajo del día y sacar
 4.  Dale a calcular ruta (IA o Manual).
 5.  Exporta el resultado en el formato que prefieras.
 
+## Despliegue
 
+Al no requerir compilación (no usamos node, npm, ni frameworks pesados), el despliegue es inmediato:
+
+*   Puedes arrastrar la carpeta completa a **Netlify** (modo Drag & Drop) y estará online en 5 segundos.
+*   Subirlo a un repositorio de GitHub y habilitar **GitHub Pages**.
+*   O simplemente enviar la carpeta en un ZIP para que los compañeros la abran en local.
 
 ## Dependencias externas
 
@@ -29,4 +34,3 @@ Están enlazadas por CDN directo para que funcione sin instalar nada:
 *   [Leaflet](https://leafletjs.com/) (Motor del mapa).
 *   [SortableJS](https://sortablejs.github.io/Sortable/) (Para hacer la lista arrastrable fluidamente).
 *   [togpx](https://github.com/tyrasd/togpx) (Librería ligera para parsear de GeoJSON a GPX).
-<img width="2470" height="1216" alt="image" src="https://github.com/user-attachments/assets/93812e23-071f-400b-b8e6-b0a79d6ad7bb" />

@@ -46,6 +46,13 @@
 
             <section class="control-group action-group">
                 <h2>Generar Ruta</h2>
+                <div style="margin-bottom: 0.5rem;">
+                    <label for="route-profile" style="font-size: 0.85rem; font-weight: 500; color: var(--text-secondary);">Sentido de la ruta:</label>
+                    <select id="route-profile" style="width: 100%; padding: 0.5rem; margin-top: 0.25rem; border: 1px solid var(--border-color); border-radius: 6px; font-family: 'Inter', sans-serif;">
+                        <option value="driving">Respetar sentido (Único sentido / Vehículo)</option>
+                        <option value="foot">Ignorar sentido (Doble sentido / Peatón)</option>
+                    </select>
+                </div>
                 <button id="btn-optimize" class="btn btn-primary" disabled>
                     <span class="icon">✨</span> Ruta Óptima (IA)
                 </button>
@@ -57,13 +64,17 @@
                     <button id="btn-export-gpx" class="btn btn-success" disabled>GPX</button>
                     <button id="btn-export-geojson" class="btn btn-success" disabled>GeoJSON</button>
                 </div>
+                <button id="btn-google-maps" class="btn btn-outline" style="margin-top: 0.5rem; width: 100%; border-color: #4285F4; color: #4285F4;" onclick="window.openGoogleMaps()">
+                    <span class="icon">🗺️</span> Abrir en Google Maps
+                </button>
             </section>
             
             <div id="status-message" class="status-message"></div>
         </aside>
 
         <!-- Contenedor principal del mapa -->
-        <main class="map-container">
+        <main class="map-container" style="position: relative;">
+            <button id="btn-navigate" onclick="window.toggleNavigation()" style="position: absolute; top: 15px; right: 15px; z-index: 1000; padding: 0.75rem 1rem; background: white; border: 2px solid rgba(0,0,0,0.2); border-radius: 8px; font-weight: bold; cursor: pointer; box-shadow: 0 2px 6px rgba(0,0,0,0.3);">📍 Seguir mi ubicación</button>
             <div id="map"></div>
         </main>
     </div>

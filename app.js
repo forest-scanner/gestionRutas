@@ -95,6 +95,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <span class="point-desc">${p.descripcion}</span>
                 </div>
                 <div class="point-color-indicator" style="background-color: ${p.color};"></div>
+                <button onclick="window.deletePoint('${p.id}')" style="background:none;border:none;cursor:pointer;margin-left:8px;font-size:1.1rem;color:#ef4444;" title="Eliminar punto">🗑️</button>
             `;
             pointsListEl.appendChild(li);
         });
@@ -121,11 +122,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 const idmint = props.idmint || 'Desconocido';
                 const desc = props.descripcion || 'Sin descripción';
                 const color = getColorForDescription(desc);
-                const latLng = [coords[1], coords[0]];
-
-                const marker = L.circleMarker(latLng, {
-                    radius: 8, fillColor: color, color: '#ffffff', weight: 2, opacity: 1, fillOpacity: 0.9
-                }).bindPopup(`<b>IDMINT:</b> ${idmint}<br><b>Estado:</b> ${desc}`).addTo(markersLayer);
 
                 currentPoints.push({
                     id: generateId(),
@@ -137,6 +133,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
+        refreshMarkers();
         renderPointsList();
 
         if (currentPoints.length < 2) {
@@ -184,10 +181,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const desc = 'Añadido en mapa';
         const color = '#f59e0b'; // Naranja/Ambar para puntos manuales
         
-        const marker = L.circleMarker(latLng, {
-            radius: 8, fillColor: color, color: '#ffffff', weight: 2, opacity: 1, fillOpacity: 0.9
-        }).bindPopup(`<b>IDMINT:</b> ${idmint}<br><b>Estado:</b> ${desc}`).addTo(markersLayer);
-
         currentPoints.push({
             id: generateId(),
             coordinates: [latLng.lng, latLng.lat], // Guardar como GeoJSON [lng, lat]
@@ -196,6 +189,7 @@ document.addEventListener('DOMContentLoaded', () => {
             color: color
         });
 
+        refreshMarkers();
         renderPointsList();
         
         if (currentPoints.length >= 2) {
@@ -221,13 +215,15 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             const coordsString = currentPoints.map(p => `${p.coordinates[0]},${p.coordinates[1]}`).join(';');
             let url = '';
+            const routeProfileElement = document.getElementById('route-profile');
+            const profile = routeProfileElement ? routeProfileElement.value : 'driving';
             
             if (mode === 'auto') {
-                // Trip API: Reordena automáticamente (TSP)
-                url = `https://router.project-osrm.org/trip/v1/driving/${coordsString}?geometries=geojson&roundtrip=true&source=any&destination=any`;
+                // Trip API: Reordena automáticamente (TSP), fija el origen (source=first)
+                url = `https://router.project-osrm.org/trip/v1/${profile}/${coordsString}?geometries=geojson&roundtrip=true&source=first&destination=any`;
             } else {
-                // Route API: Respeta el orden proporcionado
-                url = `https://router.project-osrm.org/route/v1/driving/${coordsString}?geometries=geojson`;
+                // Route API: Respeta el orden proporcionado y evita giros bruscos si es driving
+                url = `https://router.project-osrm.org/route/v1/${profile}/${coordsString}?geometries=geojson&continue_straight=${profile === 'driving' ? 'true' : 'default'}`;
             }
 
             const response = await fetch(url);
@@ -303,4 +299,98 @@ document.addEventListener('DOMContentLoaded', () => {
             showMessage('GeoJSON exportado correctamente.', 'info');
         } catch (error) { showMessage('Error al generar GeoJSON.', 'error'); }
     });
+
+    // Nuevas funciones globales
+    window.deletePoint = (id) => {
+        currentPoints = currentPoints.filter(p => p.id !== id);
+        refreshMarkers();
+        renderPointsList();
+        if (currentPoints.length < 2) {
+            btnOptimize.disabled = true;
+            btnManualRoute.disabled = true;
+            routeLayer.clearLayers();
+        }
+    };
+
+    const refreshMarkers = () => {
+        markersLayer.clearLayers();
+        currentPoints.forEach(p => {
+            const latLng = [p.coordinates[1], p.coordinates[0]];
+            L.circleMarker(latLng, {
+                radius: 8, fillColor: p.color, color: '#ffffff', weight: 2, opacity: 1, fillOpacity: 0.9
+            }).bindPopup(`<b>IDMINT:</b> ${p.idmint}<br><b>Estado:</b> ${p.descripcion}<br><button onclick="window.deletePoint('${p.id}')" style="margin-top:5px;cursor:pointer;color:red;border:none;background:transparent;padding:0;font-size:0.85rem;text-decoration:underline;">Eliminar punto</button>`).addTo(markersLayer);
+        });
+    };
+
+    let watchId = null;
+    let locationMarker = null;
+
+    const getNavIcon = (heading) => {
+        // SVG de una flecha de navegación (chevron)
+        const svg = `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%233b82f6' stroke='white' stroke-width='2'><path d='M12 2L22 22L12 18L2 22L12 2Z'/></svg>`;
+        return L.divIcon({
+            className: 'custom-nav-icon',
+            html: `<div style="width: 28px; height: 28px; background: url(\"data:image/svg+xml;utf8,${svg}\") no-repeat center center; background-size: contain; transform: rotate(${heading || 0}deg); filter: drop-shadow(0px 2px 3px rgba(0,0,0,0.4));"></div>`,
+            iconSize: [28, 28],
+            iconAnchor: [14, 14]
+        });
+    };
+
+    window.toggleNavigation = () => {
+        const btn = document.getElementById('btn-navigate');
+        if (!btn) return;
+        if (watchId) {
+            navigator.geolocation.clearWatch(watchId);
+            watchId = null;
+            if (locationMarker) {
+                map.removeLayer(locationMarker);
+                locationMarker = null;
+            }
+            btn.innerHTML = '📍 Seguir mi ubicación';
+            btn.classList.remove('active');
+        } else {
+            if (!navigator.geolocation) {
+                showMessage('Geolocalización no soportada.', 'error');
+                return;
+            }
+            btn.innerHTML = '🛑 Detener navegación';
+            btn.classList.add('active');
+            
+            // Usamos un lastHeading para no perder la orientación si el dispositivo se detiene
+            let lastHeading = 0;
+            
+            watchId = navigator.geolocation.watchPosition((pos) => {
+                const lat = pos.coords.latitude;
+                const lng = pos.coords.longitude;
+                if (pos.coords.heading !== null && !isNaN(pos.coords.heading)) {
+                    lastHeading = pos.coords.heading;
+                }
+                
+                if (!locationMarker) {
+                    locationMarker = L.marker([lat, lng], { icon: getNavIcon(lastHeading) }).addTo(map);
+                } else {
+                    locationMarker.setLatLng([lat, lng]);
+                    locationMarker.setIcon(getNavIcon(lastHeading));
+                }
+                map.setView([lat, lng], 17);
+            }, (err) => {
+                showMessage('Error al obtener ubicación', 'error');
+            }, { enableHighAccuracy: true });
+        }
+    };
+
+    window.openGoogleMaps = () => {
+        if (!currentRouteGeoJSON) return;
+        const coords = currentPoints.map(p => `${p.coordinates[1]},${p.coordinates[0]}`); 
+        if (coords.length > 10) {
+            showMessage('Google Maps permite unos 10 puntos, abriendo los primeros...', 'info');
+        }
+        const slice = coords.slice(0, 10);
+        const origin = slice[0];
+        const dest = slice[slice.length - 1];
+        const waypoints = slice.slice(1, slice.length - 1).join('|');
+        const modeStr = document.getElementById('route-profile').value === 'driving' ? 'driving' : 'walking';
+        const url = `https://www.google.com/maps/dir/?api=1&origin=${origin}&destination=${dest}&waypoints=${waypoints}&travelmode=${modeStr}`;
+        window.open(url, '_blank');
+    };
 });
